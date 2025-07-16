@@ -1,0 +1,44 @@
+name: Build & Test Contracts
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "contracts/**"
+      - ".github/workflows/build-test-contracts.yml"
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "contracts/**"
+      - ".github/workflows/build-test-contracts.yml"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./contracts # Set working directory to contracts folder
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18" # Or your preferred Node.js version
+
+      - name: Install dependencies
+        run: yarn install # or npm install
+
+      - name: Compile Contracts
+        run: npx hardhat compile # or forge build if using Foundry
+
+      - name: Run Tests
+        run: npx hardhat test # or forge test if using Foundry
+
+      - name: Run Solhint (Code Linting for Solidity)
+        run: npx solhint 'contracts/**/*.sol' --max-warnings 0 # Requires solhint installed in contracts/package.json

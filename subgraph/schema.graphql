@@ -1,0 +1,20 @@
+type User @entity {
+  id: Bytes! # Wallet address
+  agents: [Agent!] @derivedFrom(field: "owner")
+  # ... other user-related data
+}
+type Agent @entity {
+  id: Bytes! # Agent ID (e.g., unique hash)
+  owner: User!
+  status: String!
+  activatedModules: [String!]
+  # ... other agent-specific data
+}
+type ZAVATokenTransfer @entity {
+  id: Bytes!
+  from: Bytes!
+  to: Bytes!
+  value: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+}

@@ -1,0 +1,39 @@
+name: Deploy DApp to Vercel
+
+on:
+  push:
+    branches:
+      - main # Deploys only when pushing to the main branch
+    paths:
+      - "dapp/**"
+      - ".github/workflows/deploy-dapp.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./dapp # Set working directory to dapp folder
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile # or npm ci
+
+      - name: Build DApp
+        run: yarn build # or npm run build
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Your Vercel API Token
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # Your Vercel Org ID
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # Your Vercel Project ID
+          working-directory: ./dapp
+          prod: true # Deploy to production alias

@@ -1,0 +1,34 @@
+name: Lint Codebase
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install root dependencies
+        run: yarn install --frozen-lockfile # Or npm ci if using npm
+
+      - name: Run ESLint (for DApp/JS/TS files)
+        run: yarn lint # or npm run lint (assuming you have a lint script in root package.json or dapp/package.json)
+        continue-on-error: true # Set to false if you want strict linting to fail the build
+
+      - name: Check Prettier Formatting
+        run: yarn format:check # or npm run format:check (assuming you have a script for this)
+        continue-on-error: true # Set to false if you want strict formatting to fail the build

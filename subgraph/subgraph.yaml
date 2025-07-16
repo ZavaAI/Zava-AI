@@ -1,0 +1,48 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ZavaAIAgentCore
+    network: mainnet # or goerli, sepolia, polygon, etc.
+    source:
+      address: "0xYourAgentCoreContractAddress" # Replace with actual contract address
+      abi: ZavaAIAgentCore
+      startBlock: 12345678 # Start block of your contract deployment
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Agent
+        - User
+      abis:
+        - name: ZavaAIAgentCore
+          file: ./abis/ZavaAIAgentCore.json # Path to your contract ABI
+      eventHandlers:
+        - event: AgentCreated(indexed address,indexed bytes32)
+          handler: handleAgentCreated
+        - event: ModuleActivated(indexed bytes32,string)
+          handler: handleModuleActivated # Example event
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: ZavaAIToken
+    network: mainnet # must match above
+    source:
+      address: "0xYourTokenContractAddress" # Replace with actual contract address
+      abi: ZavaAIToken
+      startBlock: 12345670 # Start block of your token contract deployment
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ZAVATokenTransfer
+      abis:
+        - name: ZavaAIToken
+          file: ./abis/ZavaAIToken.json # Path to your token ABI
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+# ... Add more data sources for other Zava AI contracts if needed
